@@ -61,18 +61,21 @@ const posts = (await getCollection('blog')).sort(
 			}
 			@media (max-width: 720px) {
 				ul {
-					gap: 0.5em;
+					gap: 1em;
 				}
 				ul li {
 					width: 100%;
 					text-align: center;
 				}
-				ul li:first-child {
+				ul li {
+					list-style-type: none;
+				}
+				/* ul li:first-child {
 					margin-bottom: 0;
 				}
 				ul li:first-child .title {
 					font-size: 1.563em;
-				}
+				} */
 			}
 		</style>
 	</head>
@@ -87,7 +90,7 @@ const posts = (await getCollection('blog')).sort(
 								<a href={`/blog/${post.slug}/`}>
 									<h5 class="title">{post.data.title}</h5>
 									<div>
-									{post.data.tags?.split(" ").map((it) => (
+									{post.data.tags?.map((it) => (
 										<div class="first:ml-0 inline ml-2 text-base bg-blue-100 px-1 rounded-lg text-blue-500">#{it}</div>
 									))}
 									</div>

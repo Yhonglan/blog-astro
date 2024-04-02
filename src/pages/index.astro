@@ -1,8 +1,8 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
 ---
 
 <!doctype html>
@@ -13,8 +13,13 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 	<body>
 		<Header />
 		<main>
-			<h2>Hello, Welcome to my blog!</h2>
-			<p>正在装修中……</p>
+			<div class="flex flex-col justify-center items-center">
+				<div class="rounded-full w-1/4 aspect-square bg-cover" style="background-image: url('/public/ayin.png');"></div>
+				<div class="text-5xl pt-3 font-bold">Y's blog</div>
+				<p class="pt-3">
+					Face the Fear, Build the Future.
+				</p>
+			</div>
 		</main>
 		<Footer />
 	</body>
