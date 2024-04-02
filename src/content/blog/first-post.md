@@ -9,3 +9,4 @@ tags: 配置
 配置
 - Astro
 - tailwindcss （由 Astro 支持，安装：`npx astro add tailwind`）
+- tailwindcss typography (安装：`npm install -D @tailwindcss/typography`)
