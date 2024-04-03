@@ -1,5 +1,5 @@
 ---
-title: 'Markdown渲染展示'
+title: 'Markdown 渲染展示'
 description: ''
 pubDate: '2024-04-01'
 # heroImage: '/blog-placeholder-3.jpg'
@@ -35,6 +35,7 @@ tags:
 ```
 
 [链接](https://www.google.com)
+![图片](/public/blog-placeholder-about.jpg)
 
 | 表头 | 表头 |
 |:---:|:---:|
