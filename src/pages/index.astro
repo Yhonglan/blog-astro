@@ -3,7 +3,7 @@ import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
-import { Icon } from 'astro-icon/components'
+import { Icon } from "astro-icon/components";
 ---
 
 <!doctype html>
@@ -15,11 +15,36 @@ import { Icon } from 'astro-icon/components'
 		<Header />
 		<main>
 			<div class="flex flex-col justify-center items-center">
-				<div class="rounded-full w-1/4 aspect-square bg-cover" style="background-image: url('/public/ayin.png');"></div>
+				<div
+					class="rounded-full w-1/4 aspect-square bg-cover"
+					style="background-image: url('/ayin.png');"
+				>
+				</div>
 				<div class="text-5xl pt-3 font-bold">Y's blog</div>
-				<p class="pt-3">
-					Face the Fear, Build the Future.
-				</p>
+				<div class="pt-5 flex flex-wrap gap-2 justify-center">
+					{
+						[
+							"kotlin-icon",
+							"java",
+							"python",
+							"javascript",
+							"npm-icon",
+							"astro-icon",
+							"html-5",
+							"tailwindcss-icon",
+							"git-icon",
+							"linux-tux",
+							"docker-icon",
+							"obsidian-icon",
+							"markdown",
+						].map((it) => (
+							<div class="flex flex-row items-center bg-blue-100 rounded ps-1/2 pe-1">
+								<Icon name={"logos:" + it} class="mx-2 " />
+								<div class="text-nowrap text-lg text-blue-700">{it.replace("-icon", "")}</div>
+							</div>
+						))
+					}
+				</div>
 			</div>
 		</main>
 		<Footer />
