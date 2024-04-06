@@ -40,7 +40,7 @@ println("Hello World!")
 ```
 
 [链接](https://www.google.com)
-![图片](/public/blog-placeholder-about.jpg)
+![图片](/blog-placeholder-about.jpg)
 
 | 表头 | 表头 |
 |:---:|:---:|
