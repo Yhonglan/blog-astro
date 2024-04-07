@@ -102,16 +102,30 @@ renderedHtml = await encryptHtml(password, renderedHtml);
 // var decryptedHtml = await decryptHtml(password, renderedHtml)
 ---
 
-<div>
+<div class="h-40 rounded-md border-2">
   <!-- <Fragment set:html={renderedHtml} /> -->
-  <div class="hidden encryptedHtml">{renderedHtml}</div>
-  <input type="password" class="passwd" />
-  <button class="alert">Click me!</button>
+  <div class="encryptedHtml hidden">{renderedHtml}</div>
+  <div class="p-3">
+    <label
+      for="password"
+      class="block mb-1.5 text font-medium text-gray-900"
+      >请输入密码</label
+    >
+    <input
+      type="password"
+      id="password"
+      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-blue-500 block w-full p-2.5 mb-1"
+    />
+    <label class="block text-sm invisible">密码错误</label>
+    <button class="alert text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center">确定</button>
+  </div>
+  </div>
+  <!-- <input type="password" class="passwd" /> -->
+  
   <script>
-    import {Buffer} from 'buffer'
+    import { Buffer } from "buffer";
 
     async function decryptHtml(password: string, encryptedStr: string) {
-      const crypto = typeof window === "undefined" ? require("node:crypto").webcrypto : window.crypto;
       let enc = new TextEncoder();
 
       let encryptStringArray = encryptedStr.split("_");
@@ -151,7 +165,7 @@ renderedHtml = await encryptHtml(password, renderedHtml);
           key,
           encryptedHtml,
         )
-        .catch((e:any) => {});
+        .catch((e: any) => {});
 
       let dec = new TextDecoder();
       return dec.decode(decryptedHtml);
@@ -164,10 +178,13 @@ renderedHtml = await encryptHtml(password, renderedHtml);
     // 处理每个按钮上的点击事件。
     buttons.forEach((button) => {
       button.addEventListener("click", async () => {
-        let parentElement = button.parentElement as HTMLElement;
-        let inputPassword = (parentElement.querySelector(".passwd") as HTMLInputElement).value;
-        let renderedHtml = parentElement.querySelector(".encryptedHtml")?.innerHTML as string
-        console.log(typeof window === "undefined");
+        let parentElement = button.parentElement?.parentElement as HTMLElement;
+        let inputPassword = (
+          parentElement.querySelector("#password") as HTMLInputElement
+        ).value;
+        let renderedHtml = parentElement.querySelector(".encryptedHtml")
+          ?.innerHTML as string;
+
         let decryptedHtml = await decryptHtml(inputPassword, renderedHtml);
 
         let elem = document.createElement("div");
