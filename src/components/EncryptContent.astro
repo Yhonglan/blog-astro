@@ -1,0 +1,179 @@
+---
+import { reference } from "astro:content";
+
+interface Props {
+  password: string;
+}
+
+const { password } = Astro.props;
+
+var renderedHtml = await Astro.slots.render("default");
+
+async function encryptHtml(password: string, html: string) {
+  let enc = new TextEncoder();
+  let keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(password),
+    { name: "PBKDF2" },
+    false,
+    ["deriveBits", "deriveKey"],
+  );
+
+  let salt = crypto.getRandomValues(new Uint8Array(16));
+  let iv = crypto.getRandomValues(new Uint8Array(12));
+
+  let key = await crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt: salt,
+      iterations: 100000,
+      hash: "SHA-256",
+    },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 },
+    true,
+    ["encrypt", "decrypt"],
+  );
+
+  let encryptedHtml = await crypto.subtle.encrypt(
+    {
+      name: "AES-GCM",
+      iv: iv,
+    },
+    key,
+    enc.encode(html),
+  );
+
+  let base64EncryptedHtml = Buffer.from(encryptedHtml).toString("base64");
+  let base64IV = Buffer.from(iv).toString("base64");
+  let base64Salt = Buffer.from(salt).toString("base64");
+
+  return `${base64EncryptedHtml}_${base64IV}_${base64Salt}`;
+}
+
+// async function decryptHtml(password: string, encryptedStr: string) {
+//   let enc = new TextEncoder();
+
+//   let encryptStringArray = encryptedStr.split("_");
+//   let encryptedHtml = Buffer.from(encryptStringArray[0], "base64");
+//   let iv = Buffer.from(encryptStringArray[1], "base64");
+//   let salt = Buffer.from(encryptStringArray[2], "base64");
+
+//   let keyMaterial = await crypto.subtle.importKey(
+//     "raw",
+//     enc.encode(password),
+//     { name: "PBKDF2" },
+//     false,
+//     ["deriveBits", "deriveKey"],
+//   );
+
+//   let key = await crypto.subtle.deriveKey(
+//     {
+//       name: "PBKDF2",
+//       salt: salt,
+//       iterations: 100000,
+//       hash: "SHA-256",
+//     },
+//     keyMaterial,
+//     { name: "AES-GCM", length: 256 },
+//     true,
+//     ["encrypt", "decrypt"],
+//   );
+
+//   let decryptedHtml: any;
+
+//   decryptedHtml = await crypto.subtle
+//     .decrypt(
+//       {
+//         name: "AES-GCM",
+//         iv: iv,
+//       },
+//       key,
+//       encryptedHtml,
+//     )
+//     .catch((e) => {});
+
+//   let dec = new TextDecoder();
+//   return dec.decode(decryptedHtml);
+// }
+
+renderedHtml = await encryptHtml(password, renderedHtml);
+
+// var decryptedHtml = await decryptHtml(password, renderedHtml)
+---
+
+<div>
+  <!-- <Fragment set:html={renderedHtml} /> -->
+  <div class="hidden encryptedHtml">{renderedHtml}</div>
+  <input type="password" class="passwd" />
+  <button class="alert">Click me!</button>
+  <script>
+    import {Buffer} from 'buffer'
+
+    async function decryptHtml(password: string, encryptedStr: string) {
+      const crypto = typeof window === "undefined" ? require("node:crypto").webcrypto : window.crypto;
+      let enc = new TextEncoder();
+
+      let encryptStringArray = encryptedStr.split("_");
+      let encryptedHtml = Buffer.from(encryptStringArray[0], "base64");
+      let iv = Buffer.from(encryptStringArray[1], "base64");
+      let salt = Buffer.from(encryptStringArray[2], "base64");
+
+      let keyMaterial = await crypto.subtle.importKey(
+        "raw",
+        enc.encode(password),
+        { name: "PBKDF2" },
+        false,
+        ["deriveBits", "deriveKey"],
+      );
+
+      let key = await crypto.subtle.deriveKey(
+        {
+          name: "PBKDF2",
+          salt: salt,
+          iterations: 100000,
+          hash: "SHA-256",
+        },
+        keyMaterial,
+        { name: "AES-GCM", length: 256 },
+        true,
+        ["encrypt", "decrypt"],
+      );
+
+      let decryptedHtml: any;
+
+      decryptedHtml = await crypto.subtle
+        .decrypt(
+          {
+            name: "AES-GCM",
+            iv: iv,
+          },
+          key,
+          encryptedHtml,
+        )
+        .catch((e:any) => {});
+
+      let dec = new TextDecoder();
+      return dec.decode(decryptedHtml);
+    }
+
+    // 在页面上找到所有带有 `alert` 类的按钮。
+    // 脚本是打包在一起的，每页只包含一次。使用 querySelectorAll 确保此脚本将事件侦听器附加到页面上找到的具有 alert 类的每个按钮。
+    const buttons = document.querySelectorAll("button.alert");
+
+    // 处理每个按钮上的点击事件。
+    buttons.forEach((button) => {
+      button.addEventListener("click", async () => {
+        let parentElement = button.parentElement as HTMLElement;
+        let inputPassword = (parentElement.querySelector(".passwd") as HTMLInputElement).value;
+        let renderedHtml = parentElement.querySelector(".encryptedHtml")?.innerHTML as string
+        console.log(typeof window === "undefined");
+        let decryptedHtml = await decryptHtml(inputPassword, renderedHtml);
+
+        let elem = document.createElement("div");
+        elem.innerHTML = decryptedHtml;
+        button.parentElement?.replaceChildren(elem);
+      });
+    });
+  </script>
+</div>
