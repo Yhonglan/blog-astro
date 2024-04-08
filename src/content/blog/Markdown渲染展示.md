@@ -36,7 +36,9 @@ tags:
 ```
 
 ```kotlin
-println("Hello World!")
+var a = "Hello"
+var b = "World!"
+println(a + b)
 ```
 
 [链接](https://www.google.com)
