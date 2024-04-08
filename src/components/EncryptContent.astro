@@ -5,12 +5,14 @@ interface Props {
   password: string;
   title: string;
   error_msg: string;
+  btn_str: string;
 }
 
 const {
   password,
   title = "Please enter password",
   error_msg = "error password",
+  btn_str = "OK",
 } = Astro.props;
 
 var renderedHtml = await Astro.slots.render("default");
@@ -108,27 +110,50 @@ renderedHtml = await encryptHtml(password, renderedHtml);
 // var decryptedHtml = await decryptHtml(password, renderedHtml)
 ---
 
-  <div class="h-fit rounded-md border-2 border-dashed my-2">
-    <!-- <Fragment set:html={renderedHtml} /> -->
-    <div class="encryptedHtml hidden">{renderedHtml}</div>
-    <div class="p-3">
-      <label
-        for="password"
-        class="title block mb-1.5 text font-medium text-gray-900">{title}</label
-      >
-      <input
-        type="password"
-        class="password bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-blue-500 block w-full p-2.5 mb-1"
-      />
-      <label class="error_msg block text-sm invisible pb-1 text-red-600"
-        >{error_msg}</label
-      >
-      <button
-        class="alert text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
-        >确定</button
-      >
-    </div>
+<style>
+  @keyframes shake {
+    0% {
+      transform: translateX(0);
+    }
+    12.5% {
+      transform: translateX(3px);
+    }
+    25% {
+      transform: translateX(-3px);
+    }
+    50% {
+      transform: translateX(3px);
+    }
+    75% {
+      transform: translateX(-3px);
+    }
+    100% {
+      transform: translateX(0px);
+    }
+  }
+</style>
+
+<div class="h-fit rounded-md border-2 border-dashed my-2">
+  <!-- <Fragment set:html={renderedHtml} /> -->
+  <div class="encryptedHtml hidden">{renderedHtml}</div>
+  <div class="p-3">
+    <label
+      for="password"
+      class="title block mb-1.5 text font-medium text-gray-900">{title}</label
+    >
+    <input
+      type="password"
+      class="password bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-blue-500 block w-full p-2.5 mb-1"
+    />
+    <label class="error_msg block text-sm invisible pb-1 text-red-600"
+      >{error_msg}</label
+    >
+    <button
+      class="alert text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
+      >{btn_str}</button
+    >
   </div>
+</div>
 <!-- <input type="password" class="passwd" /> -->
 
 <script>
@@ -186,12 +211,18 @@ renderedHtml = await encryptHtml(password, renderedHtml);
 
   inputs.forEach((input) => {
     input.addEventListener("keypress", (event) => {
-      if(event.key === "Enter") {
-        (input.parentElement?.querySelector(".alert") as HTMLButtonElement).click()
+      if (event.key === "Enter") {
+        (
+          input.parentElement?.querySelector(".alert") as HTMLButtonElement
+        ).click();
       }
-      
+    });
+    input.addEventListener("input", (event) => {
+      if((input.nextElementSibling as HTMLElement).style.visibility == "visible") {
+        (input.nextElementSibling as HTMLElement).style.visibility = "hidden"
+      }
     })
-  })
+  });
 
   // 处理每个按钮上的点击事件。
   buttons.forEach((button) => {
@@ -212,6 +243,10 @@ renderedHtml = await encryptHtml(password, renderedHtml);
           ".error_msg",
         ) as HTMLElement;
         errorMsgHtml.style.visibility = "visible";
+        errorMsgHtml.style.animation = "shake 0.5s"
+        setTimeout(() => {
+          errorMsgHtml.style.animation = ""
+        }, 500)
       }
     });
   });
